@@ -1,9 +1,11 @@
 import express from "express";
 import { handlerRediness } from "./handlers.js";
+import { middlewareLogResponses } from "./middleware.js";
 const app = express();
 const PORT = 8080;
 
 app.get("/healthz", handlerRediness);
+app.use("/", middlewareLogResponses);
 app.use("/app", express.static("./src/app"));
 
 app.listen(PORT, () => {
