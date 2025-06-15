@@ -1,4 +1,5 @@
 import Express from "express";
+import { apiConfig } from "./config.js";
 
 export function middlewareLogResponses(
   req: Express.Request,
@@ -12,5 +13,14 @@ export function middlewareLogResponses(
       );
     }
   });
+  next();
+}
+
+export function middlewareMetricsInc(
+  _: Express.Request,
+  __: Express.Response,
+  next: Express.NextFunction,
+) {
+  apiConfig.fileserverHits++;
   next();
 }
