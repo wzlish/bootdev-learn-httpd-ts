@@ -13,7 +13,7 @@ app.use("/", middlewareLogResponses);
 app.use("/app", middlewareMetricsInc, express.static("./src/app"));
 
 app.get("/admin/metrics", handlerAdminMetrics);
-app.get("/admin/reset", handlerAdminResetHits);
+app.post("/admin/reset", handlerAdminResetHits);
 
 app.listen(PORT, () => {
   console.log(`Server is running at http://localhost:${PORT}`);
