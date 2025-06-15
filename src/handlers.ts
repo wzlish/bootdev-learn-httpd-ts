@@ -6,7 +6,10 @@ export function handlerRediness(_: Express.Request, res: Express.Response) {
   res.status(200).send("OK");
 }
 
-export function handlerAdminMetrics(_: Express.Request, res: Express.Response) {
+export async function handlerAdminMetrics(
+  _: Express.Request,
+  res: Express.Response,
+) {
   res.set("Content-Type", "text/html; charset=utf-8");
   res.status(200).send(`<html>
     <body>
@@ -16,7 +19,7 @@ export function handlerAdminMetrics(_: Express.Request, res: Express.Response) {
   </html>`);
 }
 
-export function handlerAdminResetHits(
+export async function handlerAdminResetHits(
   _: Express.Request,
   res: Express.Response,
 ) {
