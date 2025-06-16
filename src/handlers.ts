@@ -32,31 +32,22 @@ export async function handlerValidateChirp(
   req: Express.Request,
   res: Express.Response,
 ) {
-  res.set("Content-Type", "text/json; charset=utf-8");
-  let body = "";
+  if (!req.body) {
+    res
+      .status(400)
+      .send(JSON.stringify({ error: "Missing or invalid JSON body" }));
+    return;
+  }
 
-  req.on("data", (chunk) => {
-    body += chunk;
-  });
+  type parameters = {
+    body: string;
+  };
+  const params: parameters = req.body;
 
-  req.on("end", () => {
-    try {
-      const parsedBody = JSON.parse(body);
-
-      if (!parsedBody.body) {
-        res.status(400).send(JSON.stringify({ error: "Something went wrong" }));
-        return;
-      }
-      if (parsedBody.body.length > 140) {
-        res.status(400).send(JSON.stringify({ error: "Chirp is too long" }));
-        return;
-      }
-
-      res.status(200).send(JSON.stringify({ valid: true }));
-      return;
-    } catch (error) {
-      res.status(500).send(JSON.stringify({ error: "Something went wrong" }));
-      return;
-    }
-  });
+  if (params.body.length > 140) {
+    res.status(400).send(JSON.stringify({ error: "Chirp is too long" }));
+    return;
+  }
+  res.status(200).send(JSON.stringify({ valid: true }));
+  return;
 }

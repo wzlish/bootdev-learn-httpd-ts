@@ -9,9 +9,11 @@ import { middlewareMetricsInc, middlewareLogResponses } from "./middleware.js";
 const app = express();
 const PORT = 8080;
 
+app.use("/", middlewareLogResponses);
+app.use("/api", express.json());
+
 app.get("/api/healthz", handlerRediness);
 app.post("/api/validate_chirp", handlerValidateChirp);
-app.use("/", middlewareLogResponses);
 app.use("/app", middlewareMetricsInc, express.static("./src/app"));
 
 app.get("/admin/metrics", handlerAdminMetrics);
