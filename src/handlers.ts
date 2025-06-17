@@ -32,6 +32,8 @@ export async function handlerValidateChirp(
   req: Express.Request,
   res: Express.Response,
 ) {
+  const badWords = ["kerfuffle", "sharbert", "fornax"];
+
   if (!req.body) {
     res
       .status(400)
@@ -48,6 +50,14 @@ export async function handlerValidateChirp(
     res.status(400).send(JSON.stringify({ error: "Chirp is too long" }));
     return;
   }
-  res.status(200).send(JSON.stringify({ valid: true }));
-  return;
+
+  const cleanChirp: string[] = [];
+  params.body.split(" ").forEach((word: string) => {
+    if (badWords.includes(word.toLowerCase())) {
+      cleanChirp.push("****");
+      return;
+    }
+    cleanChirp.push(word);
+  });
+  res.status(200).send(JSON.stringify({ cleanedBody: cleanChirp.join(" ") }));
 }
