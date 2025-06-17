@@ -1,7 +1,22 @@
 import Express from "express";
 import { apiConfig } from "./config.js";
 
-export function handlerRediness(_: Express.Request, res: Express.Response) {
+export function handlerErrors(
+  err: Error,
+  _: Express.Request,
+  res: Express.Response,
+  __: Express.NextFunction,
+) {
+  console.log("Error: ", err);
+  res.status(500).json({
+    error: "Something went wrong on our end",
+  });
+}
+
+export async function handlerRediness(
+  _: Express.Request,
+  res: Express.Response,
+) {
   res.set("Content-Type", "text/plain; charset=utf-8");
   res.status(200).send("OK");
 }
@@ -47,8 +62,9 @@ export async function handlerValidateChirp(
   const params: parameters = req.body;
 
   if (params.body.length > 140) {
-    res.status(400).send(JSON.stringify({ error: "Chirp is too long" }));
-    return;
+    throw new Error("Chirp is too long");
+    // res.status(400).send(JSON.stringify({ error: "Chirp is too long" }));
+    // return;
   }
 
   const cleanChirp: string[] = [];
