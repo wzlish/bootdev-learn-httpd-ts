@@ -4,8 +4,8 @@ import {
   handlerAdminMetrics,
   handlerAdminResetHits,
   handlerValidateChirp,
-  handlerErrors,
 } from "./handlers.js";
+import { handlerErrors } from "./error_handler.js";
 
 import { middlewareMetricsInc, middlewareLogResponses } from "./middleware.js";
 const app = express();
