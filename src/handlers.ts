@@ -1,6 +1,6 @@
 import Express from "express";
 import { config } from "./config.js";
-import { BadRequestError, ForbiddenError } from "./error_handler.js";
+import { ForbiddenError } from "./handlers_error.js";
 import { clearUsers } from "./db/queries/users.js";
 export async function handlerRediness(
   _: Express.Request,
@@ -33,36 +33,4 @@ export async function handlerAdminReset(
   await clearUsers();
   config.api.fileserverHits = 0;
   res.status(200).send(""); // Todo: 204, but the boot.dev tests expect 200.
-}
-
-export async function handlerValidateChirp(
-  req: Express.Request,
-  res: Express.Response,
-) {
-  const badWords = ["kerfuffle", "sharbert", "fornax"];
-
-  if (!req.body) {
-    throw new BadRequestError("Missing or invalid JSON body");
-  }
-
-  type parameters = {
-    body: string;
-  };
-  const params: parameters = req.body;
-
-  if (params.body.length > config.api.messageLengthLimit) {
-    throw new BadRequestError(
-      `Chirp is too long. Max length is ${config.api.messageLengthLimit}`,
-    );
-  }
-
-  const cleanChirp: string[] = [];
-  params.body.split(" ").forEach((word: string) => {
-    if (badWords.includes(word.toLowerCase())) {
-      cleanChirp.push("****");
-      return;
-    }
-    cleanChirp.push(word);
-  });
-  res.status(200).send(JSON.stringify({ cleanedBody: cleanChirp.join(" ") }));
 }

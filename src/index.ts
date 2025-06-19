@@ -3,12 +3,11 @@ import {
   handlerRediness,
   handlerAdminMetrics,
   handlerAdminReset,
-  handlerValidateChirp,
 } from "./handlers.js";
 
-import { handlerUserCreate } from "./user_handlers.js";
+import { handlerUserCreate, handlerNewChirp } from "./handlers_user.js";
 
-import { handlerErrors } from "./error_handler.js";
+import { handlerErrors } from "./handlers_error.js";
 
 import { middlewareMetricsInc, middlewareLogResponses } from "./middleware.js";
 const app = express();
@@ -25,9 +24,9 @@ app.get("/api/healthz", async (req, res, next) => {
   }
 });
 
-app.post("/api/validate_chirp", async (req, res, next) => {
+app.post("/api/chirps", async (req, res, next) => {
   try {
-    await handlerValidateChirp(req, res);
+    await handlerNewChirp(req, res);
   } catch (err) {
     next(err);
   }
