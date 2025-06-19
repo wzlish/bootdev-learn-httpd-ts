@@ -1,6 +1,7 @@
 import Express from "express";
 import { config } from "./config.js";
-import { BadRequestError } from "./error_handler.js";
+import { BadRequestError, ForbiddenError } from "./error_handler.js";
+import { clearUsers } from "./db/queries/users.js";
 export async function handlerRediness(
   _: Express.Request,
   res: Express.Response,
@@ -22,13 +23,16 @@ export async function handlerAdminMetrics(
   </html>`);
 }
 
-export async function handlerAdminResetHits(
+export async function handlerAdminReset(
   _: Express.Request,
   res: Express.Response,
 ) {
+  if (config.api.platform != "dev") {
+    throw new ForbiddenError("No");
+  }
+  await clearUsers();
   config.api.fileserverHits = 0;
-  res.set("Content-Type", "text/plain; charset=utf-8");
-  res.status(200).send("Hits reset");
+  res.status(200).send(""); // Todo: 204, but the boot.dev tests expect 200.
 }
 
 export async function handlerValidateChirp(
@@ -38,10 +42,7 @@ export async function handlerValidateChirp(
   const badWords = ["kerfuffle", "sharbert", "fornax"];
 
   if (!req.body) {
-    res
-      .status(400)
-      .send(JSON.stringify({ error: "Missing or invalid JSON body" }));
-    return;
+    throw new BadRequestError("Missing or invalid JSON body");
   }
 
   type parameters = {

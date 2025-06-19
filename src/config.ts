@@ -17,6 +17,7 @@ type Config = {
 type ApiConfig = {
   fileserverHits: number;
   messageLengthLimit: number;
+  platform: string;
 };
 
 type DBConfig = {
@@ -25,7 +26,11 @@ type DBConfig = {
 };
 
 export const config: Config = {
-  api: { messageLengthLimit: 140, fileserverHits: 0 },
+  api: {
+    messageLengthLimit: 140,
+    fileserverHits: 0,
+    platform: getENV("PLATFORM"),
+  },
   db: {
     db_url: getENV("DB_URL"),
     migration_cfg: { migrationsFolder: "src/db/" },

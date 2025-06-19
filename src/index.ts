@@ -2,9 +2,12 @@ import express from "express";
 import {
   handlerRediness,
   handlerAdminMetrics,
-  handlerAdminResetHits,
+  handlerAdminReset,
   handlerValidateChirp,
 } from "./handlers.js";
+
+import { handlerUserCreate } from "./user_handlers.js";
+
 import { handlerErrors } from "./error_handler.js";
 
 import { middlewareMetricsInc, middlewareLogResponses } from "./middleware.js";
@@ -30,6 +33,14 @@ app.post("/api/validate_chirp", async (req, res, next) => {
   }
 });
 
+app.post("/api/users/", async (req, res, next) => {
+  try {
+    await handlerUserCreate(req, res);
+  } catch (err) {
+    next(err);
+  }
+});
+
 app.use("/app", middlewareMetricsInc, express.static("./src/app"));
 
 app.get("/admin/metrics", async (req, res, next) => {
@@ -42,7 +53,7 @@ app.get("/admin/metrics", async (req, res, next) => {
 
 app.post("/admin/reset", async (req, res, next) => {
   try {
-    await handlerAdminResetHits(req, res);
+    await handlerAdminReset(req, res);
   } catch (err) {
     next(err);
   }
