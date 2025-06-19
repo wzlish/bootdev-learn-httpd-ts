@@ -1,5 +1,5 @@
 import Express from "express";
-import { apiConfig } from "./config.js";
+import { config } from "./config.js";
 
 export function middlewareLogResponses(
   req: Express.Request,
@@ -21,6 +21,6 @@ export function middlewareMetricsInc(
   __: Express.Response,
   next: Express.NextFunction,
 ) {
-  apiConfig.fileserverHits++;
+  config.api.fileserverHits++;
   next();
 }
