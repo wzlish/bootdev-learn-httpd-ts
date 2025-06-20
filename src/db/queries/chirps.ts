@@ -13,3 +13,8 @@ export async function createChirp(chirp: NewChirp) {
 export async function clearChirps() {
   await db.delete(chirps);
 }
+
+export async function getChirps() {
+  const results = await db.select().from(chirps).orderBy(chirps.createdAt);
+  return results;
+}

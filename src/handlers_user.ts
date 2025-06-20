@@ -1,7 +1,7 @@
 import Express from "express";
 import { BadRequestError } from "./handlers_error.js";
 import { createUser } from "./db/queries/users.js";
-import { createChirp } from "./db/queries/chirps.js";
+import { createChirp, getChirps } from "./db/queries/chirps.js";
 import { config } from "./config.js";
 
 export async function handlerUserCreate(
@@ -72,4 +72,12 @@ export async function handlerNewChirp(
   }
 
   res.status(201).send(JSON.stringify(results));
+}
+
+export async function handlerGetChirps(
+  _: Express.Request,
+  res: Express.Response,
+) {
+  const results = await getChirps();
+  res.status(200).send(JSON.stringify(results));
 }

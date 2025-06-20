@@ -5,7 +5,11 @@ import {
   handlerAdminReset,
 } from "./handlers.js";
 
-import { handlerUserCreate, handlerNewChirp } from "./handlers_user.js";
+import {
+  handlerUserCreate,
+  handlerNewChirp,
+  handlerGetChirps,
+} from "./handlers_user.js";
 
 import { handlerErrors } from "./handlers_error.js";
 
@@ -27,6 +31,14 @@ app.get("/api/healthz", async (req, res, next) => {
 app.post("/api/chirps", async (req, res, next) => {
   try {
     await handlerNewChirp(req, res);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get("/api/chirps", async (req, res, next) => {
+  try {
+    await handlerGetChirps(req, res);
   } catch (err) {
     next(err);
   }
