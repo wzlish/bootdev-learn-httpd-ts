@@ -9,6 +9,7 @@ import {
   handlerUserCreate,
   handlerNewChirp,
   handlerGetChirps,
+  handlerGetChirp,
 } from "./handlers_user.js";
 
 import { handlerErrors } from "./handlers_error.js";
@@ -36,9 +37,17 @@ app.post("/api/chirps", async (req, res, next) => {
   }
 });
 
-app.get("/api/chirps", async (req, res, next) => {
+app.get("/api/chirps/", async (req, res, next) => {
   try {
     await handlerGetChirps(req, res);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.get("/api/chirps/:id", async (req, res, next) => {
+  try {
+    await handlerGetChirp(req, res);
   } catch (err) {
     next(err);
   }

@@ -1,8 +1,9 @@
 import Express from "express";
-import { BadRequestError } from "./handlers_error.js";
+import { BadRequestError, NotFoundError } from "./handlers_error.js";
 import { createUser } from "./db/queries/users.js";
-import { createChirp, getChirps } from "./db/queries/chirps.js";
+import { createChirp, getChirps, getChirp } from "./db/queries/chirps.js";
 import { config } from "./config.js";
+import { isValidUuid } from "./util.js";
 
 export async function handlerUserCreate(
   req: Express.Request,
@@ -80,4 +81,20 @@ export async function handlerGetChirps(
 ) {
   const results = await getChirps();
   res.status(200).send(JSON.stringify(results));
+}
+
+export async function handlerGetChirp(
+  req: Express.Request,
+  res: Express.Response,
+) {
+  const chirpID = req.params.id;
+  if (!chirpID || !isValidUuid(chirpID)) {
+    throw new BadRequestError("Invalid chirp id.");
+  }
+
+  const result = await getChirp(chirpID);
+  if (!result) {
+    throw new NotFoundError("No chirp with that id found.");
+  }
+  res.status(200).send(JSON.stringify(result));
 }
