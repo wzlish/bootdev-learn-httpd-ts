@@ -28,7 +28,7 @@ export async function handlerUserCreate(
     throw new Error("Could not create user.");
   }
 
-  res.status(201).send(JSON.stringify(results));
+  res.status(201).send(results);
 }
 
 export async function handlerNewChirp(
@@ -72,7 +72,7 @@ export async function handlerNewChirp(
     throw new Error("Could not create chirp.");
   }
 
-  res.status(201).send(JSON.stringify(results));
+  res.status(201).send(results);
 }
 
 export async function handlerGetChirps(
@@ -80,7 +80,7 @@ export async function handlerGetChirps(
   res: Express.Response,
 ) {
   const results = await getChirps();
-  res.status(200).send(JSON.stringify(results));
+  res.status(200).send(results);
 }
 
 export async function handlerGetChirp(
@@ -96,5 +96,5 @@ export async function handlerGetChirp(
   if (!result) {
     throw new NotFoundError("No chirp with that id found.");
   }
-  res.status(200).send(JSON.stringify(result));
+  res.status(200).send(result);
 }
