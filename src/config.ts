@@ -40,7 +40,8 @@ export const config: Config = {
     db_url: getENV("DB_URL"),
     migration_cfg: { migrationsFolder: "src/db/" },
     bcrypt_cost: 11,
-    bcrypt_dummy: "AAaa",
+    bcrypt_dummy:
+      "$2b$11$S.f1JfWW1VmBEZeDCCm8ruoTh.rP//b8pc4SYANQBKRvkBFO7MP0y",
   },
 };
 
