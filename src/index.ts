@@ -38,7 +38,7 @@ app.post("/api/chirps", async (req, res, next) => {
   }
 });
 
-app.get("/api/chirps/", async (req, res, next) => {
+app.get("/api/chirps", async (req, res, next) => {
   try {
     await handlerGetChirps(req, res);
   } catch (err) {
@@ -54,7 +54,7 @@ app.get("/api/chirps/:id", async (req, res, next) => {
   }
 });
 
-app.post("/api/users/", async (req, res, next) => {
+app.post("/api/users", async (req, res, next) => {
   try {
     await handlerUserCreate(req, res);
   } catch (err) {
@@ -62,7 +62,7 @@ app.post("/api/users/", async (req, res, next) => {
   }
 });
 
-app.post("/api/login/", async (req, res, next) => {
+app.post("/api/login", async (req, res, next) => {
   try {
     await handlerUserLogin(req, res);
   } catch (err) {
