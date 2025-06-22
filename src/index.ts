@@ -7,6 +7,7 @@ import {
 
 import {
   handlerUserCreate,
+  handlerUserLogin,
   handlerNewChirp,
   handlerGetChirps,
   handlerGetChirp,
@@ -56,6 +57,14 @@ app.get("/api/chirps/:id", async (req, res, next) => {
 app.post("/api/users/", async (req, res, next) => {
   try {
     await handlerUserCreate(req, res);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post("/api/login/", async (req, res, next) => {
+  try {
+    await handlerUserLogin(req, res);
   } catch (err) {
     next(err);
   }

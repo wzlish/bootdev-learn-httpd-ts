@@ -3,3 +3,16 @@ export function isValidUuid(uuid: string): boolean {
     uuid,
   );
 }
+
+export function selectFields<T extends object, K extends keyof T>(
+  source: T,
+  keys: K[],
+): Pick<T, K> {
+  const result: Partial<Pick<T, K>> = {};
+  for (const key of keys) {
+    if (source.hasOwnProperty(key)) {
+      result[key] = source[key];
+    }
+  }
+  return result as Pick<T, K>;
+}

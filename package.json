@@ -21,6 +21,9 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "-": "^0.0.1",
+    "@types/bcrypt": "^5.0.2",
+    "bcrypt": "^6.0.0",
     "drizzle-orm": "^0.44.2",
     "express": "^5.1.0",
     "postgres": "^3.4.7"

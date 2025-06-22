@@ -1,4 +1,7 @@
 import type { MigrationConfig } from "drizzle-orm/migrator";
+import { hashPassword } from "./auth.js";
+import crypto from "crypto";
+
 process.loadEnvFile();
 
 function getENV(key: string) {
@@ -23,6 +26,8 @@ type ApiConfig = {
 type DBConfig = {
   db_url: string;
   migration_cfg: MigrationConfig;
+  bcrypt_cost: number;
+  bcrypt_dummy: string;
 };
 
 export const config: Config = {
@@ -34,5 +39,10 @@ export const config: Config = {
   db: {
     db_url: getENV("DB_URL"),
     migration_cfg: { migrationsFolder: "src/db/" },
+    bcrypt_cost: 11,
+    bcrypt_dummy: "AAaa",
   },
 };
+
+const dummyHash = await hashPassword(crypto.randomBytes(32).toString("base64"));
+config.db.bcrypt_dummy = dummyHash;

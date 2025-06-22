@@ -8,6 +8,13 @@
       "when": 1750366408461,
       "tag": "0000_orange_nebula",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1750567661389,
+      "tag": "0001_great_guardsmen",
+      "breakpoints": true
     }
   ]
 }
