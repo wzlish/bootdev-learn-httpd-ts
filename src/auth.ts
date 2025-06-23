@@ -1,7 +1,8 @@
 import bcrypt from "bcrypt";
 import type { JwtPayload } from "jsonwebtoken";
 import jwt from "jsonwebtoken";
-import { ForbiddenError } from "./handlers_error.js";
+import { BadRequestError, ForbiddenError } from "./handlers_error.js";
+import Express from "express";
 
 type payload = Pick<JwtPayload, "iss" | "sub" | "iat" | "exp">;
 
@@ -64,4 +65,12 @@ export function validateJWT(tokenString: string, secret: string) {
   } catch (err) {
     throw new ForbiddenError("Invalid Token.");
   }
+}
+
+export function getBearerToken(req: Express.Request): string {
+  const authHeader = req.header("Authorization")?.trim().split(" ");
+  if (!authHeader || authHeader.length <= 1 || authHeader[0] !== "Bearer") {
+    throw new BadRequestError("Invalid authorization header.");
+  }
+  return authHeader[authHeader.length - 1];
 }

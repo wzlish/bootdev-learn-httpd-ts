@@ -15,6 +15,12 @@ function getENV(key: string) {
 type Config = {
   api: ApiConfig;
   db: DBConfig;
+  jwt: JWTConfig;
+};
+
+type JWTConfig = {
+  secret: string;
+  defaultDur: number;
 };
 
 type ApiConfig = {
@@ -42,6 +48,10 @@ export const config: Config = {
     bcrypt_cost: 11,
     bcrypt_dummy:
       "$2b$11$S.f1JfWW1VmBEZeDCCm8ruoTh.rP//b8pc4SYANQBKRvkBFO7MP0y",
+  },
+  jwt: {
+    secret: getENV("JWT_SECRET"),
+    defaultDur: 3600, //1hr in seconds.
   },
 };
 

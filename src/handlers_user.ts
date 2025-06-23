@@ -8,7 +8,13 @@ import { createUser, getUser } from "./db/queries/users.js";
 import { createChirp, getChirps, getChirp } from "./db/queries/chirps.js";
 import { config } from "./config.js";
 import { isValidUuid, selectFields } from "./util.js";
-import { hashPassword, checkPasswordHash } from "./auth.js";
+import {
+  hashPassword,
+  checkPasswordHash,
+  makeJWT,
+  validateJWT,
+  getBearerToken,
+} from "./auth.js";
 
 type UserDataResponse = {
   id: string;
@@ -71,6 +77,7 @@ export async function handlerUserLogin(
   type parameters = {
     email: string;
     password: string;
+    expiresInSeconds: number;
   };
   const params: parameters = req.body;
 
@@ -80,6 +87,14 @@ export async function handlerUserLogin(
 
   if (!params.password) {
     throw new BadRequestError(`You must provide a password.`);
+  }
+
+  if (
+    !params.expiresInSeconds ||
+    params.expiresInSeconds < 0 ||
+    params.expiresInSeconds > config.jwt.defaultDur
+  ) {
+    params.expiresInSeconds = config.jwt.defaultDur;
   }
 
   const userDetails = await getUser(params.email);
@@ -96,7 +111,13 @@ export async function handlerUserLogin(
   if (!validPassword) {
     throw new UnauthorizedError("Invalid email address or password.");
   }
-  res.status(200).send(selectFields(userDetails, userResponseKeys));
+
+  const jwtToken = makeJWT(userDetails.id, 3600, config.jwt.secret);
+  const responce = {
+    ...selectFields(userDetails, userResponseKeys),
+    token: jwtToken,
+  };
+  res.status(200).send(responce);
 }
 
 export async function handlerNewChirp(
@@ -110,14 +131,9 @@ export async function handlerNewChirp(
 
   type parameters = {
     body: string;
-    userId: string;
   };
   const params: parameters = req.body;
-
-  if (!params.userId) {
-    throw new BadRequestError("Missing or invalid userId");
-  }
-
+  const tokenUser = validateJWT(getBearerToken(req), config.jwt.secret);
   if (params.body.length > config.api.messageLengthLimit) {
     throw new BadRequestError(
       `Chirp is too long. Max length is ${config.api.messageLengthLimit}`,
@@ -134,7 +150,7 @@ export async function handlerNewChirp(
 
   const results = await createChirp({
     body: cleanChirp.join(" "),
-    userId: params.userId,
+    userId: tokenUser,
   });
   if (!results) {
     throw new Error("Could not create chirp.");
