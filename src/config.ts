@@ -45,5 +45,8 @@ export const config: Config = {
   },
 };
 
-const dummyHash = await hashPassword(crypto.randomBytes(32).toString("base64"));
+const dummyHash = await hashPassword(
+  crypto.randomBytes(32).toString("base64"),
+  config.db.bcrypt_cost,
+);
 config.db.bcrypt_dummy = dummyHash;

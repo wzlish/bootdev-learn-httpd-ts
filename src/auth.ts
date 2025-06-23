@@ -1,9 +1,16 @@
 import bcrypt from "bcrypt";
-import { config } from "./config.js";
+import type { JwtPayload } from "jsonwebtoken";
+import jwt from "jsonwebtoken";
+import { ForbiddenError } from "./handlers_error.js";
 
-export async function hashPassword(password: string): Promise<string> {
+type payload = Pick<JwtPayload, "iss" | "sub" | "iat" | "exp">;
+
+export async function hashPassword(
+  password: string,
+  bcryptCost: number,
+): Promise<string> {
   try {
-    return await bcrypt.hash(password, config.db.bcrypt_cost);
+    return await bcrypt.hash(password, bcryptCost);
   } catch (err) {
     throw new Error(
       "Error hashing password: " +
@@ -23,5 +30,38 @@ export async function checkPasswordHash(
       "Error comparing password: " +
         (err instanceof Error ? err.message : String(err)),
     );
+  }
+}
+
+export function makeJWT(
+  userID: string,
+  expiresIn: number,
+  secret: string,
+): string {
+  const iat = Math.floor(Date.now() / 1000);
+  return jwt.sign(
+    {
+      iss: "chirpy",
+      sub: userID,
+      iat: iat,
+      exp: iat + expiresIn,
+    } satisfies payload,
+    secret,
+    { algorithm: "HS256" },
+  );
+}
+
+export function validateJWT(tokenString: string, secret: string) {
+  try {
+    const decoded: payload = jwt.verify(tokenString, secret) as JwtPayload;
+    if (!decoded.sub) {
+      throw new ForbiddenError("No userid in token.");
+    }
+    if (!decoded.iss || decoded.iss !== "chirpy") {
+      throw new ForbiddenError("Invalid Issuer.");
+    }
+    return decoded.sub;
+  } catch (err) {
+    throw new ForbiddenError("Invalid Token.");
   }
 }

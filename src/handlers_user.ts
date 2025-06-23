@@ -44,7 +44,10 @@ export async function handlerUserCreate(
   if (!params.password) {
     throw new BadRequestError(`You must provide a password.`);
   }
-  const hashedPassword = await hashPassword(params.password);
+  const hashedPassword = await hashPassword(
+    params.password,
+    config.db.bcrypt_cost,
+  );
   const results = await createUser({
     email: params.email,
     hashedPassword: hashedPassword,
