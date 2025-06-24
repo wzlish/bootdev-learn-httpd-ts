@@ -11,6 +11,8 @@ import {
   handlerNewChirp,
   handlerGetChirps,
   handlerGetChirp,
+  handlerTokenRefresh,
+  handlerTokenRevoke,
 } from "./handlers_user.js";
 
 import { handlerErrors } from "./handlers_error.js";
@@ -57,6 +59,22 @@ app.get("/api/chirps/:id", async (req, res, next) => {
 app.post("/api/users", async (req, res, next) => {
   try {
     await handlerUserCreate(req, res);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post("/api/refresh", async (req, res, next) => {
+  try {
+    await handlerTokenRefresh(req, res);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.post("/api/revoke", async (req, res, next) => {
+  try {
+    await handlerTokenRevoke(req, res);
   } catch (err) {
     next(err);
   }

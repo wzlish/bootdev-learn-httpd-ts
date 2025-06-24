@@ -21,6 +21,7 @@ type Config = {
 type JWTConfig = {
   secret: string;
   defaultDur: number;
+  refreshDur: number;
 };
 
 type ApiConfig = {
@@ -51,7 +52,8 @@ export const config: Config = {
   },
   jwt: {
     secret: getENV("JWT_SECRET"),
-    defaultDur: 3600, //1hr in seconds.
+    defaultDur: 3600, // Seconds
+    refreshDur: 60, // Days
   },
 };
 

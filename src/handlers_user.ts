@@ -4,7 +4,13 @@ import {
   NotFoundError,
   UnauthorizedError,
 } from "./handlers_error.js";
-import { createUser, getUser } from "./db/queries/users.js";
+import {
+  createUser,
+  getUser,
+  newRefreshToken,
+  getRefreshToken,
+  revokeRefreshToken,
+} from "./db/queries/users.js";
 import { createChirp, getChirps, getChirp } from "./db/queries/chirps.js";
 import { config } from "./config.js";
 import { isValidUuid, selectFields } from "./util.js";
@@ -14,6 +20,7 @@ import {
   makeJWT,
   validateJWT,
   getBearerToken,
+  makeRefreshToken,
 } from "./auth.js";
 
 type UserDataResponse = {
@@ -89,14 +96,6 @@ export async function handlerUserLogin(
     throw new BadRequestError(`You must provide a password.`);
   }
 
-  if (
-    !params.expiresInSeconds ||
-    params.expiresInSeconds < 0 ||
-    params.expiresInSeconds > config.jwt.defaultDur
-  ) {
-    params.expiresInSeconds = config.jwt.defaultDur;
-  }
-
   const userDetails = await getUser(params.email);
   if (!userDetails || userDetails.hashedPassword == "unset") {
     checkPasswordHash(params.password, config.db.bcrypt_dummy);
@@ -112,10 +111,29 @@ export async function handlerUserLogin(
     throw new UnauthorizedError("Invalid email address or password.");
   }
 
-  const jwtToken = makeJWT(userDetails.id, 3600, config.jwt.secret);
+  const jwtToken = makeJWT(
+    userDetails.id,
+    config.jwt.defaultDur,
+    config.jwt.secret,
+  );
+
+  const expiresAt = new Date();
+  expiresAt.setDate(expiresAt.getDate() + config.jwt.refreshDur);
+
+  const refreshToken = await newRefreshToken({
+    id: makeRefreshToken(),
+    userId: userDetails.id,
+    expiresAt: expiresAt,
+  });
+
+  if (!refreshToken) {
+    throw new Error("Internal server error");
+  }
+
   const responce = {
     ...selectFields(userDetails, userResponseKeys),
     token: jwtToken,
+    refreshToken: refreshToken.id,
   };
   res.status(200).send(responce);
 }
@@ -181,4 +199,38 @@ export async function handlerGetChirp(
     throw new NotFoundError("No chirp with that id found.");
   }
   res.status(200).send(result);
+}
+
+export async function handlerTokenRefresh(
+  req: Express.Request,
+  res: Express.Response,
+) {
+  const sentToken = getBearerToken(req);
+  if (!sentToken) {
+    throw new BadRequestError("Missing refresh token.");
+  }
+
+  const refreshToken = await getRefreshToken(sentToken);
+  if (!refreshToken) {
+    throw new UnauthorizedError("Invalid token.");
+  }
+
+  const jwtToken = makeJWT(
+    refreshToken.userId,
+    config.jwt.defaultDur,
+    config.jwt.secret,
+  );
+  res.status(200).send({ token: jwtToken });
+}
+
+export async function handlerTokenRevoke(
+  req: Express.Request,
+  res: Express.Response,
+) {
+  const sentToken = getBearerToken(req);
+  if (!sentToken) {
+    throw new BadRequestError("Missing refresh token.");
+  }
+  await revokeRefreshToken(sentToken);
+  res.status(204).send();
 }
