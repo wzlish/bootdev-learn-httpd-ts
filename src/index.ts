@@ -5,15 +5,19 @@ import {
   handlerAdminReset,
 } from "./handlers.js";
 
+import { handlerUserCreate } from "./handlers_user.js";
+
 import {
-  handlerUserCreate,
   handlerUserLogin,
+  handlerTokenRefresh,
+  handlerTokenRevoke,
+} from "./handlers_auth.js";
+
+import {
   handlerNewChirp,
   handlerGetChirps,
   handlerGetChirp,
-  handlerTokenRefresh,
-  handlerTokenRevoke,
-} from "./handlers_user.js";
+} from "./handlers_chirps.js";
 
 import { handlerErrors } from "./handlers_error.js";
 
