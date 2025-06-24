@@ -17,6 +17,7 @@ import {
   handlerNewChirp,
   handlerGetChirps,
   handlerGetChirp,
+  handlerDeleteChirp,
 } from "./handlers_chirps.js";
 
 import { handlerErrors } from "./handlers_error.js";
@@ -55,6 +56,14 @@ app.get("/api/chirps", async (req, res, next) => {
 app.get("/api/chirps/:id", async (req, res, next) => {
   try {
     await handlerGetChirp(req, res);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.delete("/api/chirps/:id", async (req, res, next) => {
+  try {
+    await handlerDeleteChirp(req, res);
   } catch (err) {
     next(err);
   }

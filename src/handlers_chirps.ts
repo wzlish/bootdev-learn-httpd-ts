@@ -1,7 +1,17 @@
 import Express from "express";
-import { BadRequestError, NotFoundError } from "./handlers_error.js";
+import {
+  BadRequestError,
+  ForbiddenError,
+  NotFoundError,
+  UnauthorizedError,
+} from "./handlers_error.js";
 
-import { createChirp, getChirps, getChirp } from "./db/queries/chirps.js";
+import {
+  createChirp,
+  getChirps,
+  getChirp,
+  deleteChirp,
+} from "./db/queries/chirps.js";
 import { config } from "./config.js";
 import { isValidUuid } from "./util.js";
 import { validateJWT, getBearerToken } from "./auth.js";
@@ -67,4 +77,30 @@ export async function handlerGetChirp(
     throw new NotFoundError("No chirp with that id found.");
   }
   res.status(200).send(result);
+}
+
+export async function handlerDeleteChirp(
+  req: Express.Request,
+  res: Express.Response,
+) {
+  const chirpID = req.params.id;
+  if (!chirpID || !isValidUuid(chirpID)) {
+    throw new BadRequestError("Invalid chirp id.");
+  }
+
+  const chirp = await getChirp(chirpID);
+  if (!chirp) {
+    throw new NotFoundError("BBB No chirp with that id found.");
+  }
+  const tokenUser = validateJWT(getBearerToken(req), config.jwt.secret);
+  if (chirp.userId !== tokenUser) {
+    throw new ForbiddenError("Not your chirp!");
+  }
+
+  const result = await deleteChirp(chirpID, tokenUser);
+  if (!result) {
+    throw new NotFoundError("AAA No chirp with that id found.");
+  }
+
+  res.status(204).send();
 }
