@@ -90,7 +90,7 @@ export async function handlerDeleteChirp(
 
   const chirp = await getChirp(chirpID);
   if (!chirp) {
-    throw new NotFoundError("BBB No chirp with that id found.");
+    throw new NotFoundError("No chirp with that id found.");
   }
   const tokenUser = validateJWT(getBearerToken(req), config.jwt.secret);
   if (chirp.userId !== tokenUser) {
@@ -99,7 +99,7 @@ export async function handlerDeleteChirp(
 
   const result = await deleteChirp(chirpID, tokenUser);
   if (!result) {
-    throw new NotFoundError("AAA No chirp with that id found.");
+    throw new NotFoundError("No chirp with that id found.");
   }
 
   res.status(204).send();
