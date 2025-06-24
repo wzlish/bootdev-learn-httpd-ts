@@ -5,7 +5,7 @@ import {
   handlerAdminReset,
 } from "./handlers.js";
 
-import { handlerUserCreate } from "./handlers_user.js";
+import { handlerUserCreate, handlerUserUpdate } from "./handlers_user.js";
 
 import {
   handlerUserLogin,
@@ -63,6 +63,14 @@ app.get("/api/chirps/:id", async (req, res, next) => {
 app.post("/api/users", async (req, res, next) => {
   try {
     await handlerUserCreate(req, res);
+  } catch (err) {
+    next(err);
+  }
+});
+
+app.put("/api/users", async (req, res, next) => {
+  try {
+    await handlerUserUpdate(req, res);
   } catch (err) {
     next(err);
   }

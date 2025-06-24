@@ -75,7 +75,7 @@ export function validateJWT(tokenString: string, secret: string) {
 export function getBearerToken(req: Express.Request): string {
   const authHeader = req.header("Authorization")?.trim().split(" ");
   if (!authHeader || authHeader.length <= 1 || authHeader[0] !== "Bearer") {
-    throw new BadRequestError("Invalid authorization header.");
+    throw new UnauthorizedError("Invalid authorization header.");
   }
   return authHeader[authHeader.length - 1];
 }

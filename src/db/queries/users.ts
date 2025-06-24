@@ -1,6 +1,12 @@
 import { eq, gt, and, sql, isNull } from "drizzle-orm";
 import { db } from "../index.js";
-import { NewUser, users, NewRefreshToken, refreshTokens } from "../schema.js";
+import {
+  NewUser,
+  users,
+  NewRefreshToken,
+  refreshTokens,
+  UpdateUser,
+} from "../schema.js";
 
 export async function createUser(user: NewUser) {
   const [result] = await db
@@ -53,4 +59,13 @@ export async function revokeRefreshToken(token: string) {
     .update(refreshTokens)
     .set({ revokedAt: sql`NOW()` })
     .where(eq(refreshTokens.id, token));
+}
+
+export async function updateUser(uuid: string, user: UpdateUser) {
+  const [result] = await db
+    .update(users)
+    .set(user)
+    .where(eq(users.id, uuid))
+    .returning();
+  return result;
 }

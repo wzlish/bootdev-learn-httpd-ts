@@ -8,6 +8,12 @@ abstract class CustomError extends Error {
   }
 }
 
+export class DatabaseError extends CustomError {
+  constructor(message: string) {
+    super(message, 500);
+  }
+}
+
 export class BadRequestError extends CustomError {
   constructor(message: string) {
     super(message, 400);
