@@ -1,12 +1,22 @@
 import Express from "express";
-import { BadRequestError, NotFoundError } from "../handlers_error.js";
+import {
+  UnauthorizedError,
+  BadRequestError,
+  NotFoundError,
+} from "../handlers_error.js";
 import { updateUser } from "../db/queries/users.js";
 import { isValidUuid } from "../util.js";
+import { getAPIKey } from "../auth.js";
+import { config } from "../config.js";
 
 export async function handlerPolkerWebhook(
   req: Express.Request,
   res: Express.Response,
 ) {
+  if (getAPIKey(req) !== config.polka.key) {
+    throw new UnauthorizedError("Unauthorized");
+  }
+
   if (!req.body) {
     throw new BadRequestError("Missing or invalid JSON body");
   }

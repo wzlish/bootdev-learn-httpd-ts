@@ -80,6 +80,14 @@ export function getBearerToken(req: Express.Request): string {
   return authHeader[authHeader.length - 1];
 }
 
+export function getAPIKey(req: Express.Request): string {
+  const authHeader = req.header("Authorization")?.trim().split(" ");
+  if (!authHeader || authHeader.length <= 1 || authHeader[0] !== "ApiKey") {
+    throw new UnauthorizedError("Invalid authorization header.");
+  }
+  return authHeader[authHeader.length - 1];
+}
+
 export function makeRefreshToken() {
   return crypto.randomBytes(32).toString("hex");
 }

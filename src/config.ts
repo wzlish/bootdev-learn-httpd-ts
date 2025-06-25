@@ -16,6 +16,7 @@ type Config = {
   api: ApiConfig;
   db: DBConfig;
   jwt: JWTConfig;
+  polka: PolkaConfig;
 };
 
 type JWTConfig = {
@@ -37,6 +38,10 @@ type DBConfig = {
   bcrypt_dummy: string;
 };
 
+type PolkaConfig = {
+  key: string;
+};
+
 export const config: Config = {
   api: {
     messageLengthLimit: 140,
@@ -54,6 +59,9 @@ export const config: Config = {
     secret: getENV("JWT_SECRET"),
     defaultDur: 3600, // Seconds
     refreshDur: 60, // Days
+  },
+  polka: {
+    key: getENV("POLKA_KEY"),
   },
 };
 
