@@ -5,17 +5,19 @@ import { config } from "./config.js";
 import { selectFields } from "./util.js";
 import { hashPassword, getBearerToken, validateJWT } from "./auth.js";
 
-type UserDataResponse = {
+export type UserDataResponse = {
   id: string;
   createdAt: Date;
   updatedAt: Date;
   email: string;
+  isChirpyRed: boolean;
 };
-const userResponseKeys: (keyof UserDataResponse)[] = [
+export const userResponseKeys: (keyof UserDataResponse)[] = [
   "id",
   "createdAt",
   "updatedAt",
   "email",
+  "isChirpyRed",
 ];
 
 export async function handlerUserCreate(

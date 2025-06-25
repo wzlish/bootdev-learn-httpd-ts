@@ -20,6 +20,8 @@ import {
   handlerDeleteChirp,
 } from "./handlers_chirps.js";
 
+import { handlerPolkerWebhook } from "./webhooks/polka.js";
+
 import { handlerErrors } from "./handlers_error.js";
 
 import { middlewareMetricsInc, middlewareLogResponses } from "./middleware.js";
@@ -29,6 +31,7 @@ const PORT = 8080;
 app.use("/", middlewareLogResponses);
 app.use("/api", express.json());
 
+/* API */
 app.get("/api/healthz", async (req, res, next) => {
   try {
     await handlerRediness(req, res);
@@ -108,9 +111,22 @@ app.post("/api/login", async (req, res, next) => {
     next(err);
   }
 });
+/* END API */
 
+/* Webhooks */
+app.post("/api/polka/webhooks/", async (req, res, next) => {
+  try {
+    await handlerPolkerWebhook(req, res);
+  } catch (err) {
+    next(err);
+  }
+});
+/* End Webhooks */
+
+/* Main App */
 app.use("/app", middlewareMetricsInc, express.static("./src/app"));
 
+/* Admin */
 app.get("/admin/metrics", async (req, res, next) => {
   try {
     await handlerAdminMetrics(req, res);
@@ -126,6 +142,7 @@ app.post("/admin/reset", async (req, res, next) => {
     next(err);
   }
 });
+/* End Admin */
 
 app.use(handlerErrors);
 

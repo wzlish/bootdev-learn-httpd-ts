@@ -22,6 +22,13 @@
       "when": 1750725022269,
       "tag": "0002_known_talkback",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1750845868584,
+      "tag": "0003_stale_swordsman",
+      "breakpoints": true
     }
   ]
 }
