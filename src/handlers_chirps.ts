@@ -56,10 +56,15 @@ export async function handlerNewChirp(
 }
 
 export async function handlerGetChirps(
-  _: Express.Request,
+  req: Express.Request,
   res: Express.Response,
 ) {
-  const results = await getChirps();
+  let authorId = "";
+  if (typeof req.query.authorId === "string") {
+    authorId = req.query.authorId;
+  }
+
+  const results = await getChirps(authorId);
   res.status(200).send(results);
 }
 
